@@ -9,12 +9,12 @@ uvicorn main:app --reload
 ```
 
 ## Frontend bekijken
-Open `frontend/index.html` in een browser nadat backend draait.
+Open `http://localhost:8000/` in een browser nadat backend draait.
 
 ## Deployment
 - Zet de backend op [Render](https://render.com)
 - Gebruik GitHub voor versiebeheer
-- Voeg je API endpoints toe aan een online dashboard (optioneel)
+- Frontend-bestanden worden automatisch meegehost via FastAPI
 
 ## To do
 - Integratie met X (Twitter)

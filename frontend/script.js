@@ -14,4 +14,3 @@ fetch(backendUrl)
     console.error("Fout bij ophalen data:", err);
     document.getElementById("results").innerHTML = "<p>Kan geen data laden van de backend.</p>";
   });
-

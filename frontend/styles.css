@@ -4,3 +4,25 @@ body {
   color: #eee;
   padding: 20px;
 }
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#results {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+p {
+  background-color: #222;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+b {
+  color: #ff6f61;
+}

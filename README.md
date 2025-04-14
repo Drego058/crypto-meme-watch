@@ -15,8 +15,3 @@ Open `http://localhost:8000/` in een browser nadat backend draait.
 - Zet de backend op [Render](https://render.com)
 - Gebruik GitHub voor versiebeheer
 - Frontend-bestanden worden automatisch meegehost via FastAPI
-
-## To do
-- Integratie met X (Twitter)
-- Verbeterde AI-model
-- Historische data analyse

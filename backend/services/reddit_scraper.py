@@ -1,10 +1,9 @@
 import snscrape.modules.reddit as reddit
 
 def fetch_reddit_posts(keyword, limit=10):
-    scraper = reddit.RedditSearchScraper(f'{keyword}')
     posts = []
-    for i, post in enumerate(scraper.get_items()):
+    for i, post in enumerate(reddit.RedditSearchScraper(f"{keyword} site:reddit.com").get_items()):
         if i >= limit:
             break
-        posts.append(post.title + "\n" + post.selftext)
+        posts.append(post.content)
     return posts

@@ -19,13 +19,16 @@ def serve_index():
 
 @app.get("/analyze")
 def analyze():
-    posts = fetch_reddit_posts("meme coin")
-    analyzed = [
-        {
-            "text": post,
-            "sentiment": analyze_sentiment(post),
-            "prediction": predict_trend(post)
-        }
-        for post in posts
-    ]
-    return {"results": analyzed}
+    try:
+        posts = fetch_reddit_posts("meme coin")
+        analyzed = [
+            {
+                "text": post,
+                "sentiment": analyze_sentiment(post),
+                "prediction": predict_trend(post)
+            }
+            for post in posts
+        ]
+        return {"results": analyzed}
+    except Exception as e:
+        return {"error": str(e)}

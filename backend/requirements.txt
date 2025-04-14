@@ -5,3 +5,4 @@ requests
 praw
 nltk
 python-dotenv
+sentiment

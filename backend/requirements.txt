@@ -5,4 +5,4 @@ requests
 praw
 nltk
 python-dotenv
-sentimentvaderSentiment 
+vaderSentiment==3.3.2 

@@ -1,5 +1,7 @@
 fastapi
 uvicorn
+pydantic
 requests
+praw
 nltk
 python-dotenv

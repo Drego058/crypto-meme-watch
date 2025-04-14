@@ -1,4 +1,3 @@
-# backend/services/reddit_scraper.py
 import praw
 import os
 

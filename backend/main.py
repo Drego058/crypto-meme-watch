@@ -1,7 +1,3 @@
-from dotenv import load_dotenv
-import os
-load_dotenv()
-
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -13,6 +9,7 @@ from models.predictor import predict_trend
 
 app = FastAPI()
 
+# Serve static frontend files
 app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
 @app.get("/")

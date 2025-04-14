@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-pydantic
-requests
-praw
-nltk
-python-dotenv
-vaderSentiment==3.3.2 

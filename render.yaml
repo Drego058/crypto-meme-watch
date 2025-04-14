@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: crypto-meme-watch-backend
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port 10000
+    plan: free
+    envVars:
+      - key: REDDIT_CLIENT_ID
+        value: your_reddit_client_id
+      - key: REDDIT_SECRET
+        value: your_reddit_secret
+      - key: REDDIT_USER_AGENT
+        value: your_user_agent
+      - key: COINMARKETCAP_API_KEY
+        value: your_coinmarketcap_api_key
+    autoDeploy: true

@@ -35,6 +35,11 @@ function renderDashboard(data, mode = "live") {
   verifiedData.forEach(item => {
     const sentiment = getSentimentLabel(item.avg_sentiment);
     const isHot = item.trendScore > 80;
+    const priceText = item.price ? `$${item.price.toFixed(4)}` : "<span class='warn'>Niet beschikbaar</span>";
+    const changeText = item.change_24h !== null && item.change_24h !== undefined
+      ? `${item.change_24h}%`
+      : "<span class='warn'>Niet beschikbaar</span>";
+
     const div = document.createElement("div");
     div.className = `card verified ${item.isDemo ? "demo" : ""}`;
     div.innerHTML = `
@@ -45,8 +50,8 @@ function renderDashboard(data, mode = "live") {
       <p><strong>Status:</strong> ✅ Verified</p>
       <p><strong>Mentions:</strong> ${item.mentions}</p>
       <p class="${sentiment.class}"><strong>Sentiment:</strong> ${item.avg_sentiment} (${sentiment.label})</p>
-      <p><strong>Price:</strong> $${item.price?.toFixed(4) ?? "?"}</p>
-      <p><strong>Change 24h:</strong> ${item.change_24h ?? "?"}%</p>
+      <p><strong>Price:</strong> ${priceText}</p>
+      <p><strong>Change 24h:</strong> ${changeText}</p>
       <p><strong>🔥 Trending Score:</strong> ${item.trendScore}</p>
       <div class="scorebar">
         <div class="bar" style="width: ${Math.min(item.trendScore, 100)}%"></div>

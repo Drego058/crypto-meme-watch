@@ -33,7 +33,7 @@ def serve_index():
 @app.get("/analyze")
 def analyze():
     try:
-        update_symbol_id_map(force=True)  # zorg dat map up-to-date is
+        update_symbol_id_map()  # GEEN force=True meer
 
         posts = fetch_reddit_posts("meme coin")
         coin_stats = {}

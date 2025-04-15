@@ -1,20 +1,55 @@
 
-# Meme Coin AI - Advanced
+# Meme Coin AI Dashboard
 
-## Functies:
-- Herkent meme coins in Reddit-posts.
-- Voert sentimentanalyse uit per coin.
-- Haalt live prijzen op via CoinGecko.
-- Dashboard met coin naam, mentions, sentiment en prijs.
+Deze applicatie zoekt automatisch naar meme coins op Reddit/X, analyseert sentiment, en toont trending coins.
 
-## Starten
+## Functies
 
-### Backend:
+- 🔍 Herkenning van meme coins in posts
+- 🤖 Sentimentanalyse per coin
+- 💹 Live prijzen + 24h trends via CoinMarketCap API
+- 🚀 Automatische herkenning van upcoming coins
+- 📊 Dashboard met visuele weergave
+
+## Installatie
+
+1. Clone de repo:
 ```bash
-cd backend
+git clone https://github.com/jouw-gebruiker/je-repo.git
+cd je-repo/backend
+```
+
+2. Installeer requirements:
+```bash
 pip install -r requirements.txt
+```
+
+3. Voeg een `.env` toe:
+```
+COINMARKETCAP_API_KEY=your_api_key_here
+REDDIT_CLIENT_ID=your_reddit_id
+REDDIT_CLIENT_SECRET=your_reddit_secret
+REDDIT_USER_AGENT=MemeCoinBot/0.1
+```
+
+4. Start de backend:
+```bash
 uvicorn main:app --reload
 ```
 
-### Dashboard:
-Ga naar http://localhost:8000/
+5. Ga naar `http://localhost:8000/` om het dashboard te bekijken.
+
+## GitHub Push
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/<username>/<repo>.git
+git push -u origin main
+```
+
+## License
+
+MIT

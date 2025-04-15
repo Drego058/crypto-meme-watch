@@ -10,12 +10,20 @@
 <body>
   <div class="container">
     <h1>Meme Coin Dashboard</h1>
-
-    <h2>🚀 Upcoming Coins</h2>
-    <div id="upcomingCoins" class="coin-list"></div>
+    
+    <div class="controls">
+      <label for="viewToggle">View:</label>
+      <select id="viewToggle">
+        <option value="grid" selected>Grid</option>
+        <option value="list">List</option>
+      </select>
+    </div>
 
     <h2>✅ Verified Coins</h2>
-    <div id="verifiedCoins" class="coin-list"></div>
+    <div id="verifiedCoins" class="coin-list grid-view"></div>
+
+    <h2>🚀 Upcoming Coins</h2>
+    <div id="upcomingCoins" class="coin-list grid-view"></div>
   </div>
   <script src="/static/script.js"></script>
 </body>

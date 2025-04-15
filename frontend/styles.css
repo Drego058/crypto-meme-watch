@@ -8,26 +8,39 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: auto;
 }
 
 h1, h2 {
   text-align: center;
+  margin-top: 30px;
 }
 
-.coin-list {
+.controls {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.coin-list.grid-view {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.coin-list.list-view {
+  display: block;
   margin-bottom: 40px;
 }
 
 .card {
   padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s ease;
+  background: white;
+  margin-bottom: 15px;
 }
 
 .card:hover {
@@ -35,11 +48,9 @@ h1, h2 {
 }
 
 .card.verified {
-  background-color: #e6f7e6;
   border-left: 5px solid #4caf50;
 }
 
 .card.upcoming {
-  background-color: #fff3cd;
   border-left: 5px solid #ffc107;
 }

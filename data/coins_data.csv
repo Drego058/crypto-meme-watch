@@ -1,3 +1,1 @@
-name,score
-MOONCOIN,0.87
-RUGTOKEN,-0.45
+coin_name,mention_count,sentiment_score,prediction

@@ -1,5 +1,5 @@
+
 fastapi
 uvicorn
 vaderSentiment
-praw
-python-dotenv
+snscrape

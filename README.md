@@ -1,17 +1,25 @@
-# Meme Coin Trend AI
-Een AI-project dat trending meme coins opspoort op Reddit en X, sentiment analyseert en een voorspelling maakt of de coin zal stijgen of dalen.
 
-## Starten (Backend)
+# Meme Coin AI Dashboard (Light Theme)
+
+AI-dashboard dat meme coins opspoort op Reddit, analyseert en een voorspelling doet of ze stijgen of dalen.
+
+## Installatie (Backend)
+
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-## Frontend bekijken
-Open `http://localhost:8000/` in een browser nadat backend draait.
+## Reddit API Keys instellen
+
+Maak een app op [Reddit Apps](https://www.reddit.com/prefs/apps)  
+Zet je `REDDIT_CLIENT_ID` en `REDDIT_CLIENT_SECRET` als omgevingvariabelen.
+
+## Openen
+
+Ga naar `http://localhost:8000/` in je browser.
 
 ## Deployment
-- Zet de backend op [Render](https://render.com)
-- Gebruik GitHub voor versiebeheer
-- Frontend-bestanden worden automatisch meegehost via FastAPI
+- Render of andere hosting voor FastAPI backend
+- Frontend wordt geserveerd via `/static`

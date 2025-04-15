@@ -2,4 +2,4 @@
 fastapi
 uvicorn
 vaderSentiment
-snscrape
+praw

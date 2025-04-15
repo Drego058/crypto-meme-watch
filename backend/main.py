@@ -10,6 +10,7 @@ from models.predictor import predict_trend
 
 app = FastAPI()
 
+# Serve static frontend files
 app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
 @app.get("/")

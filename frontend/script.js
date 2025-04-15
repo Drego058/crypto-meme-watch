@@ -2,23 +2,38 @@
 fetch("/analyze")
   .then(res => res.json())
   .then(data => {
-    const div = document.getElementById("results");
-    if (!data.results) {
-      div.innerHTML = "<p>No results.</p>";
-      return;
-    }
+    const coins = data.results.map(item => item.coin || "Unknown");
+    const mentions = data.results.map(item => item.mentions || 0);
+    const sentiments = data.results.map(item => item.avg_sentiment || 0);
+    const prices = data.results.map(item => item.price || 0);
+
+    // Chart.js chart
+    new Chart(document.getElementById("mentionChart"), {
+      type: "bar",
+      data: {
+        labels: coins,
+        datasets: [{
+          label: "Mentions per Coin",
+          data: mentions,
+          backgroundColor: "#4b9cd3"
+        }]
+      }
+    });
+
+    // Vul de tabel
+    const tbody = document.getElementById("coinTableBody");
     data.results.forEach(item => {
-      div.innerHTML += `
-        <div class="card">
-          <p><strong>Text:</strong> ${item.text}</p>
-          <p><strong>Sentiment:</strong> ${item.sentiment}</p>
-          <p><strong>Prediction:</strong> ${item.prediction}</p>
-          <p><strong>Bitcoin Price:</strong> $${item.price_btc}</p>
-        </div>
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${item.coin || "-"}</td>
+        <td>${item.mentions || 0}</td>
+        <td>${item.avg_sentiment?.toFixed(2) || 0}</td>
+        <td>${item.price !== null ? "$" + item.price : "n/a"}</td>
       `;
+      tbody.appendChild(row);
     });
   })
   .catch(err => {
     console.error("Error fetching data:", err);
-    document.getElementById("results").innerHTML = "<p>Could not load data from backend.</p>";
+    document.body.innerHTML = "<p>Fout bij laden van het dashboard.</p>";
   });

@@ -3,12 +3,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Meme Coin AI</title>
+  <title>Meme Coin Dashboard</title>
   <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Meme Coin Analyzer</h1>
-  <div id="results"></div>
+  <div class="container">
+    <h1>Meme Coin Trend Dashboard</h1>
+    <canvas id="mentionChart"></canvas>
+    <table>
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Mentions</th>
+          <th>Avg Sentiment</th>
+          <th>Price (USD)</th>
+        </tr>
+      </thead>
+      <tbody id="coinTableBody"></tbody>
+    </table>
+  </div>
   <script src="/static/script.js"></script>
 </body>
 </html>

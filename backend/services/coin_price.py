@@ -6,12 +6,14 @@ _price_cache = {}
 _price_expiry = {}
 _known_ids = set()
 _known_ids_last_updated = 0
+_change_cache = {}
+_change_expiry = {}
 
 def update_known_coin_ids():
     global _known_ids, _known_ids_last_updated
     now = time.time()
     if now - _known_ids_last_updated < 3600:
-        return  # cache geldig 1 uur
+        return
 
     try:
         url = "https://api.coingecko.com/api/v3/coins/list"
@@ -55,9 +57,14 @@ def get_coin_prices_bulk(coin_ids):
         prices[cid] = _price_cache.get(cid) if cid in _price_cache else None
     return prices
 
-def get_coin_price_change_24h(coin_id):
-    if not is_valid_coin_id(coin_id):
+def get_coin_price_change_24h(coin_id, allow=True):
+    now = time.time()
+    if coin_id in _change_cache and now < _change_expiry.get(coin_id, 0):
+        return _change_cache[coin_id]
+
+    if not allow:
         return None
+
     try:
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=1"
         response = requests.get(url)
@@ -72,7 +79,9 @@ def get_coin_price_change_24h(coin_id):
             start_price = prices[0][1]
             end_price = prices[-1][1]
             change = ((end_price - start_price) / start_price) * 100
-            return round(change, 2)
+            _change_cache[coin_id] = round(change, 2)
+            _change_expiry[coin_id] = now + 3600
+            return _change_cache[coin_id]
     except Exception as e:
         print(f"Error fetching 24h price change: {e}")
     return None

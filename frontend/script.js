@@ -2,38 +2,38 @@
 fetch("/analyze")
   .then(res => res.json())
   .then(data => {
-    const coins = data.results.map(item => item.coin || "Unknown");
-    const mentions = data.results.map(item => item.mentions || 0);
-    const sentiments = data.results.map(item => item.avg_sentiment || 0);
-    const prices = data.results.map(item => item.price || 0);
+    const verifiedContainer = document.getElementById("verifiedCoins");
+    const upcomingContainer = document.getElementById("upcomingCoins");
 
-    // Chart.js chart
-    new Chart(document.getElementById("mentionChart"), {
-      type: "bar",
-      data: {
-        labels: coins,
-        datasets: [{
-          label: "Mentions per Coin",
-          data: mentions,
-          backgroundColor: "#4b9cd3"
-        }]
-      }
+    // Toon upcoming coins
+    data.upcoming.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h3>$${item.coin}</h3>
+        <p><strong>Status:</strong> 🚀 Upcoming</p>
+        <p><strong>Mentions:</strong> ${item.mentions}</p>
+        <p><strong>Sentiment:</strong> ${item.avg_sentiment}</p>
+      `;
+      upcomingContainer.appendChild(div);
     });
 
-    // Vul de tabel
-    const tbody = document.getElementById("coinTableBody");
-    data.results.forEach(item => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${item.coin || "-"}</td>
-        <td>${item.mentions || 0}</td>
-        <td>${item.avg_sentiment?.toFixed(2) || 0}</td>
-        <td>${item.price !== null ? "$" + item.price : "n/a"}</td>
+    // Toon verified coins
+    data.verified.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h3>$${item.coin}</h3>
+        <p><strong>Status:</strong> ✅ Verified</p>
+        <p><strong>Mentions:</strong> ${item.mentions}</p>
+        <p><strong>Sentiment:</strong> ${item.avg_sentiment}</p>
+        <p><strong>Price:</strong> $${item.price ?? "?"}</p>
+        <p><strong>Change 24h:</strong> ${item.change_24h ?? "?"}%</p>
       `;
-      tbody.appendChild(row);
+      verifiedContainer.appendChild(div);
     });
   })
   .catch(err => {
-    console.error("Error fetching data:", err);
-    document.body.innerHTML = "<p>Fout bij laden van het dashboard.</p>";
+    console.error("Fout bij ophalen data:", err);
+    document.body.innerHTML = "<p>Kon geen data laden van de backend.</p>";
   });

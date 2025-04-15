@@ -13,7 +13,7 @@ from services.coin_utils import extract_coin_mentions
 
 load_dotenv()
 
-# Simpele CoinTicker -> CoinGecko ID mapping (uitbreidbaar)
+# Simpele CoinTicker -> CoinGecko ID mapping
 SYMBOL_TO_ID = {
     "DOGE": "dogecoin",
     "PEPE": "pepe",
@@ -48,27 +48,37 @@ def analyze():
                 coin_stats[symbol]["mentions"] += 1
                 coin_stats[symbol]["sentiment_sum"] += sentiment
 
-        # Filter alleen geldige coins
-        valid_symbols = [s for s in coin_stats if SYMBOL_TO_ID.get(s.upper()) and is_valid_coin_id(SYMBOL_TO_ID[s.upper()])]
-        ids = [SYMBOL_TO_ID[s.upper()] for s in valid_symbols]
-
-        prices = get_coin_prices_bulk(ids)
-
         result = []
-        for symbol in valid_symbols:
-            coin_id = SYMBOL_TO_ID[symbol.upper()]
-            mentions = coin_stats[symbol]["mentions"]
-            avg_sentiment = coin_stats[symbol]["sentiment_sum"] / mentions
-            price = prices.get(coin_id)
-            change = get_coin_price_change_24h(coin_id)
-            result.append({
-                "coin": symbol,
-                "mentions": mentions,
-                "avg_sentiment": round(avg_sentiment, 3),
-                "price": price,
-                "change_24h": change
-            })
 
-        return {"results": result}
+        verified = []
+        upcoming = []
+
+        for symbol, data in coin_stats.items():
+            mentions = data["mentions"]
+            avg_sentiment = data["sentiment_sum"] / mentions
+            coin_id = SYMBOL_TO_ID.get(symbol.upper())
+
+            if coin_id and is_valid_coin_id(coin_id):
+                price = get_coin_prices_bulk([coin_id]).get(coin_id)
+                change = get_coin_price_change_24h(coin_id)
+                verified.append({
+                    "coin": symbol,
+                    "status": "verified",
+                    "mentions": mentions,
+                    "avg_sentiment": round(avg_sentiment, 3),
+                    "price": price,
+                    "change_24h": change
+                })
+            else:
+                upcoming.append({
+                    "coin": symbol,
+                    "status": "upcoming",
+                    "mentions": mentions,
+                    "avg_sentiment": round(avg_sentiment, 3),
+                    "price": None,
+                    "change_24h": None
+                })
+
+        return {"verified": verified, "upcoming": upcoming}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})

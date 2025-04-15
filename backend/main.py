@@ -19,6 +19,9 @@ from services.coin_utils import extract_coin_mentions
 
 load_dotenv()
 
+# fallback symbolen die als valid beschouwd worden ongeacht API-map
+FALLBACK_VALID_SYMBOLS = {"BTC", "ETH", "DOGE", "PEPE", "SHIB", "WIF"}
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
@@ -33,14 +36,17 @@ def serve_index():
 @app.get("/analyze")
 def analyze():
     try:
-        update_symbol_id_map()  # GEEN force=True meer
+        update_symbol_id_map()
 
         posts = fetch_reddit_posts("meme coin")
+        print(f"🔎 Gevonden posts: {len(posts)}")
+
         coin_stats = {}
 
         for post in posts:
             sentiment = analyze_sentiment(post)
             mentions = extract_coin_mentions(post)
+            print(f"📨 Mentions in post: {mentions}")
             for symbol in mentions:
                 symbol = symbol.upper()
                 if symbol not in coin_stats:
@@ -52,11 +58,16 @@ def analyze():
         upcoming = []
 
         symbols = list(coin_stats.keys())
-        valid_symbols = [s for s in symbols if is_valid_coin_id(s)]
+        print(f"💬 Herkende coins: {symbols}")
+
+        valid_symbols = [s for s in symbols if is_valid_coin_id(s) or s in FALLBACK_VALID_SYMBOLS]
+        print(f"✅ Geldige CoinMarketCap-symbolen (inclusief fallback): {valid_symbols}")
+
         prices = get_coin_prices_bulk(valid_symbols)
 
         for symbol, data in coin_stats.items():
-            if data["mentions"] <= 5:
+            if data["mentions"] <= 2:  # verlaagde drempel
+                print(f"⚠️ Te weinig mentions voor {symbol}, gefilterd.")
                 continue
 
             mentions = data["mentions"]
@@ -83,6 +94,7 @@ def analyze():
                     "change_24h": None
                 })
 
+        print(f"✅ Verified: {len(verified)} | 🚀 Upcoming: {len(upcoming)}")
         return {"verified": verified, "upcoming": upcoming}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})

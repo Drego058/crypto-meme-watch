@@ -3,11 +3,14 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 import os
+from dotenv import load_dotenv
 
 from services.reddit_scraper import fetch_reddit_posts
 from services.sentiment import analyze_sentiment
 from models.predictor import predict_trend
 from services.coin_price import get_coin_price
+
+load_dotenv()
 
 app = FastAPI()
 

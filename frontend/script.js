@@ -3,18 +3,22 @@ fetch("/analyze")
   .then(res => res.json())
   .then(data => {
     const div = document.getElementById("results");
+    if (!data.results) {
+      div.innerHTML = "<p>No results.</p>";
+      return;
+    }
     data.results.forEach(item => {
       div.innerHTML += `
         <div class="card">
-          <h3>$${item.coin}</h3>
-          <p><strong>Mentions:</strong> ${item.mentions}</p>
-          <p><strong>Avg. Sentiment:</strong> ${item.avg_sentiment.toFixed(2)}</p>
-          <p><strong>Price (USD):</strong> ${item.price !== null ? '$' + item.price : 'n/a'}</p>
+          <p><strong>Text:</strong> ${item.text}</p>
+          <p><strong>Sentiment:</strong> ${item.sentiment}</p>
+          <p><strong>Prediction:</strong> ${item.prediction}</p>
+          <p><strong>Bitcoin Price:</strong> $${item.price_btc}</p>
         </div>
       `;
     });
   })
   .catch(err => {
-    document.getElementById("results").innerHTML = "<p>Error fetching data.</p>";
-    console.error("Fout bij ophalen data:", err);
+    console.error("Error fetching data:", err);
+    document.getElementById("results").innerHTML = "<p>Could not load data from backend.</p>";
   });

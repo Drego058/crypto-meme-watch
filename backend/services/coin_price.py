@@ -16,8 +16,32 @@ _price_cache = {}
 _price_expiry = {}
 
 CACHE_FILE = os.path.join(os.path.dirname(__file__), "../cache/coin_symbol_map.json")
+CG_MAP_FILE = os.path.join(os.path.dirname(__file__), "../cache/coingecko_symbol_map.json")
+
 _id_map = {}
 _id_map_updated = 0
+_cg_symbol_map = {}
+
+def load_coingecko_symbol_map():
+    global _cg_symbol_map
+    if _cg_symbol_map:
+        return _cg_symbol_map
+    try:
+        if os.path.exists(CG_MAP_FILE):
+            with open(CG_MAP_FILE) as f:
+                _cg_symbol_map = json.load(f)
+                return _cg_symbol_map
+        print("⬇️ Downloading CoinGecko symbol map...")
+        res = requests.get(f"{CG_BASE_URL}/coins/list")
+        res.raise_for_status()
+        raw = res.json()
+        _cg_symbol_map = {coin["symbol"].upper(): coin["id"] for coin in raw}
+        with open(CG_MAP_FILE, "w") as f:
+            json.dump(_cg_symbol_map, f)
+        return _cg_symbol_map
+    except Exception as e:
+        print(f"⚠️ Failed to load CoinGecko map: {e}")
+        return {}
 
 def update_symbol_id_map(force=False):
     global _id_map, _id_map_updated
@@ -78,12 +102,17 @@ def get_coin_prices_bulk(symbols):
         except Exception as e:
             print(f"⚠️ Error fetching CoinMarketCap prices: {e}")
             # fallback naar CoinGecko
+            cg_map = load_coingecko_symbol_map()
             for s in uncached:
+                cg_id = cg_map.get(s.upper())
+                if not cg_id:
+                    print(f"⚠️ Geen CoinGecko ID gevonden voor {s}")
+                    continue
                 try:
-                    res = requests.get(f"{CG_BASE_URL}/simple/price", params={"ids": s.lower(), "vs_currencies": "usd"})
+                    res = requests.get(f"{CG_BASE_URL}/simple/price", params={"ids": cg_id, "vs_currencies": "usd"})
                     res.raise_for_status()
                     cg_data = res.json()
-                    price = cg_data.get(s.lower(), {}).get("usd")
+                    price = cg_data.get(cg_id, {}).get("usd")
                     _price_cache[s] = price
                     _price_expiry[s] = now + 60
                 except Exception as cg_err:
@@ -108,7 +137,11 @@ def get_coin_price_change_24h(symbol):
         print(f"⚠️ Error fetching 24h change (CMC): {e}")
         # fallback naar CoinGecko
         try:
-            res = requests.get(f"{CG_BASE_URL}/coins/{symbol.lower()}/market_chart", params={"vs_currency": "usd", "days": 1})
+            cg_map = load_coingecko_symbol_map()
+            cg_id = cg_map.get(symbol.upper())
+            if not cg_id:
+                return None
+            res = requests.get(f"{CG_BASE_URL}/coins/{cg_id}/market_chart", params={"vs_currency": "usd", "days": 1})
             res.raise_for_status()
             cg_data = res.json()
             prices = cg_data.get("prices", [])

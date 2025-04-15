@@ -2,6 +2,7 @@
 import os
 import requests
 import time
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,23 +13,36 @@ CMC_HEADERS = {"X-CMC_PRO_API_KEY": CMC_API_KEY}
 
 _price_cache = {}
 _price_expiry = {}
+
+CACHE_FILE = os.path.join(os.path.dirname(__file__), "../cache/coin_symbol_map.json")
 _id_map = {}
 _id_map_updated = 0
 
 def update_symbol_id_map(force=False):
     global _id_map, _id_map_updated
     now = time.time()
+
     if not force and (now - _id_map_updated < 86400):
         return
 
     try:
+        print("🔁 Updating CoinMarketCap symbol map...")
         res = requests.get(f"{CMC_BASE_URL}/cryptocurrency/map", headers=CMC_HEADERS)
         res.raise_for_status()
         coins = res.json()["data"]
         _id_map = {coin["symbol"].upper(): coin["id"] for coin in coins}
         _id_map_updated = now
+
+        with open(CACHE_FILE, "w") as f:
+            json.dump({"updated": now, "map": _id_map}, f)
     except Exception as e:
-        print(f"Error updating CoinMarketCap symbol map: {e}")
+        print(f"⚠️ Error updating CoinMarketCap symbol map: {e}")
+        # fallback op cache
+        if os.path.exists(CACHE_FILE):
+            with open(CACHE_FILE) as f:
+                cached = json.load(f)
+                _id_map = cached.get("map", {})
+                _id_map_updated = cached.get("updated", now)
 
 def is_valid_coin_id(symbol):
     update_symbol_id_map()

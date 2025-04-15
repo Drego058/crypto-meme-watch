@@ -22,20 +22,19 @@ def update_symbol_id_map(force=False):
     global _id_map, _id_map_updated
     now = time.time()
 
-    # Laad cache eerst
+    # 1. Probeer altijd cache eerst
     if os.path.exists(CACHE_FILE):
         try:
             with open(CACHE_FILE) as f:
                 cached = json.load(f)
                 _id_map = cached.get("map", {})
                 _id_map_updated = cached.get("updated", 0)
+                if not force and now - _id_map_updated < 86400:
+                    return  # geldige cache, stop hier
         except Exception as e:
             print(f"⚠️ Failed to load local cache: {e}")
 
-    # Skip als cache nog geldig is
-    if not force and (now - _id_map_updated < 86400):
-        return
-
+    # 2. Alleen als cache te oud is of geforceerd: update via CoinMarketCap
     try:
         print("🔁 Updating CoinMarketCap symbol map from API...")
         res = requests.get(f"{CMC_BASE_URL}/cryptocurrency/map", headers=CMC_HEADERS)
@@ -47,6 +46,7 @@ def update_symbol_id_map(force=False):
             json.dump({"updated": now, "map": _id_map}, f)
     except Exception as e:
         print(f"⚠️ Error updating CoinMarketCap symbol map: {e}")
+        # bij fout, oude cache blijft actief
 
 def is_valid_coin_id(symbol):
     update_symbol_id_map()

@@ -10,3 +10,22 @@
   stroke: #2196f3;
   stroke-width: 2;
 }
+
+body.dark {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+body.dark .card {
+  background: #1e1e1e;
+  border-color: #333;
+}
+body.dark .legend {
+  background: #1e1e1e;
+  border-color: #444;
+}
+body.dark .scorebar {
+  background: #333;
+}
+body.dark .scorebar .bar {
+  background-color: #81c784;
+}

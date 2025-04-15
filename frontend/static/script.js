@@ -122,3 +122,31 @@ fetch("/analyze")
     console.error("Fout bij ophalen data:", err);
     document.body.innerHTML = "<p>❌ Kan geen data ophalen van de backend. Controleer of deze draait.</p>";
   });
+
+
+
+// Voeg dark mode toggle toe aan de pagina
+const toggle = document.createElement("button");
+toggle.innerText = "🌓 Toggle Dark Mode";
+toggle.style.position = "fixed";
+toggle.style.bottom = "20px";
+toggle.style.right = "20px";
+toggle.style.zIndex = 1000;
+toggle.style.padding = "10px 15px";
+toggle.style.background = "#222";
+toggle.style.color = "#fff";
+toggle.style.border = "none";
+toggle.style.borderRadius = "5px";
+toggle.style.cursor = "pointer";
+
+toggle.onclick = () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+};
+
+document.body.appendChild(toggle);
+
+// Laad voorkeur bij start
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}

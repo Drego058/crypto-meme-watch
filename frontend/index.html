@@ -5,19 +5,18 @@
   <meta charset="UTF-8">
   <title>Meme Coin AI</title>
   <link rel="stylesheet" href="/static/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>Meme Coin Dashboard</h1>
-    
+
     <div class="controls">
       <label for="viewToggle">Weergave:</label>
       <select id="viewToggle">
         <option value="grid" selected>Grid</option>
         <option value="list">List</option>
       </select>
-      
+
       <label for="dataToggle">Data:</label>
       <select id="dataToggle">
         <option value="live" selected>Live</option>
@@ -37,11 +36,7 @@
     <div class="legend">
       <p><strong>🔥 Trending Score:</strong></p>
       <ul>
-        <li>Gebaseerd op:</li>
-        <li>➕ Aantal mentions × 2</li>
-        <li>➕ Gemiddeld sentiment × 50</li>
-        <li>➕ 24u prijsverandering × 2</li>
-        <li><em>→ Hoe hoger, hoe meer hype of potentie</em></li>
+        <li>Gebaseerd op mentions, sentiment en prijsverandering</li>
       </ul>
     </div>
 
@@ -51,6 +46,7 @@
     <h2>🚀 Upcoming Coins</h2>
     <div id="upcomingCoins" class="coin-list grid-view"></div>
   </div>
+
   <script src="/static/script.js"></script>
 </body>
 </html>

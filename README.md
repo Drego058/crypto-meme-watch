@@ -1,55 +1,51 @@
 
-# Meme Coin AI Dashboard
+# 🧠 Meme Coin AI Dashboard
 
-Deze applicatie zoekt automatisch naar meme coins op Reddit/X, analyseert sentiment, en toont trending coins.
+Een AI-powered dashboard dat meme coins in de gaten houdt op Reddit en X.  
+Toont real-time sentiment, mentions, prijsdata en trending scores.
 
-## Functies
+## 🔧 Functionaliteiten
 
-- 🔍 Herkenning van meme coins in posts
-- 🤖 Sentimentanalyse per coin
-- 💹 Live prijzen + 24h trends via CoinMarketCap API
-- 🚀 Automatische herkenning van upcoming coins
-- 📊 Dashboard met visuele weergave
+- 🔍 Zoek naar trending meme coins
+- 📈 Sentimentanalyse (VADER)
+- 💬 Mentions op Reddit
+- 💰 Prijs + 24u change via CoinMarketCap & CoinGecko fallback
+- 🔥 Trending score + HOT-label
+- 🖼️ Sparklines (tijdelijk uitgeschakeld)
+- 🌐 Volledig werkende frontend (light UI)
 
-## Installatie
+## 🚀 Installatie
 
-1. Clone de repo:
 ```bash
-git clone https://github.com/jouw-gebruiker/je-repo.git
-cd je-repo/backend
-```
-
-2. Installeer requirements:
-```bash
+cd backend
 pip install -r requirements.txt
-```
-
-3. Voeg een `.env` toe:
-```
-COINMARKETCAP_API_KEY=your_api_key_here
-REDDIT_CLIENT_ID=your_reddit_id
-REDDIT_CLIENT_SECRET=your_reddit_secret
-REDDIT_USER_AGENT=MemeCoinBot/0.1
-```
-
-4. Start de backend:
-```bash
 uvicorn main:app --reload
 ```
 
-5. Ga naar `http://localhost:8000/` om het dashboard te bekijken.
+Bezoek dan: `http://localhost:8000`
 
-## GitHub Push
+## 📁 Projectstructuur
 
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/<username>/<repo>.git
-git push -u origin main
+```
+project_root/
+├── backend/
+│   ├── main.py
+│   ├── services/
+│   └── models/
+├── frontend/
+│   ├── index.html
+│   └── static/
+├── data/
+├── .env.template
+└── README.md
 ```
 
-## License
+## 🧪 Demo-modus
 
-MIT
+Je kunt in de frontend handmatig demo-data tonen.
+
+## 🌍 Deployment
+
+Gebruik GitHub + Render (of Vercel) om te hosten.  
+Voeg je API keys toe als environment variables.
+

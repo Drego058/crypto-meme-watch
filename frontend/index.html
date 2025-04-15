@@ -25,6 +25,26 @@
       </select>
     </div>
 
+    <div class="legend">
+      <p><strong>📊 Sentiment Legenda:</strong></p>
+      <ul>
+        <li><span class="sentiment-positive">🟢 Bullish</span> = Positieve buzz (score > 0.5)</li>
+        <li><span class="sentiment-neutral">🟡 Neutraal</span> = Gemengd of zwak positief (0 t/m 0.5)</li>
+        <li><span class="sentiment-negative">🔴 Bearish</span> = Negatieve posts of paniek (score < 0)</li>
+      </ul>
+    </div>
+
+    <div class="legend">
+      <p><strong>🔥 Trending Score:</strong></p>
+      <ul>
+        <li>Gebaseerd op:</li>
+        <li>➕ Aantal mentions × 2</li>
+        <li>➕ Gemiddeld sentiment × 50</li>
+        <li>➕ 24u prijsverandering × 2</li>
+        <li><em>→ Hoe hoger, hoe meer hype of potentie</em></li>
+      </ul>
+    </div>
+
     <h2>✅ Verified Coins</h2>
     <div id="verifiedCoins" class="coin-list grid-view"></div>
 

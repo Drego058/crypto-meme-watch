@@ -1,72 +1,9 @@
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-  padding: 20px;
-  margin: 0;
-}
-
-.container {
-  max-width: 1200px;
-  margin: auto;
-}
-
-h1, h2 {
-  text-align: center;
-  margin-top: 30px;
-}
-
-.controls {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.coin-list.grid-view {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: 16px;
-  margin-bottom: 40px;
-}
-
-.coin-list.list-view {
-  display: block;
-  margin-bottom: 40px;
-}
-
-.card {
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-  background: white;
-  margin-bottom: 15px;
-  position: relative;
-}
-
-.card:hover {
-  transform: scale(1.02);
-}
-
-.card.verified {
-  border-left: 5px solid #4caf50;
-}
-
-.card.upcoming {
-  border-left: 5px solid #ffc107;
-}
-
-.card.demo {
-  border: 2px dashed #888;
-  opacity: 0.95;
-}
-
-.demo-label {
+.hot-label {
   font-size: 0.8em;
+  background: #d32f2f;
   color: #fff;
-  background: #666;
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 6px;
-  vertical-align: middle;
 }

@@ -20,10 +20,14 @@ function renderDashboard(data, mode = "live") {
       (item.avg_sentiment * 50) +
       ((item.change_24h ?? 0) * 2)
     );
+    item.isDemo = mode === "demo";
     return item;
   }).sort((a, b) => b.trendScore - a.trendScore);
 
-  const upcomingData = mode === "demo" ? mockUpcoming : (data.upcoming || []);
+  const upcomingData = (mode === "demo" ? mockUpcoming : (data.upcoming || [])).map(item => ({
+    ...item,
+    isDemo: mode === "demo"
+  }));
 
   const view = viewToggle?.value || "grid";
   verifiedContainer.className = "coin-list " + (view === "list" ? "list-view" : "grid-view");
@@ -34,9 +38,9 @@ function renderDashboard(data, mode = "live") {
 
   verifiedData.forEach(item => {
     const div = document.createElement("div");
-    div.className = "card verified";
+    div.className = "card verified" + (item.isDemo ? " demo" : "");
     div.innerHTML = `
-      <h3>$${item.coin}</h3>
+      <h3>$${item.coin} ${item.isDemo ? "<span class='demo-label'>DEMO</span>" : ""}</h3>
       <p><strong>Status:</strong> ✅ Verified</p>
       <p><strong>Mentions:</strong> ${item.mentions}</p>
       <p><strong>Sentiment:</strong> ${item.avg_sentiment}</p>
@@ -49,9 +53,9 @@ function renderDashboard(data, mode = "live") {
 
   upcomingData.forEach(item => {
     const div = document.createElement("div");
-    div.className = "card upcoming";
+    div.className = "card upcoming" + (item.isDemo ? " demo" : "");
     div.innerHTML = `
-      <h3>$${item.coin}</h3>
+      <h3>$${item.coin} ${item.isDemo ? "<span class='demo-label'>DEMO</span>" : ""}</h3>
       <p><strong>Status:</strong> 🚀 Upcoming</p>
       <p><strong>Mentions:</strong> ${item.mentions}</p>
       <p><strong>Sentiment:</strong> ${item.avg_sentiment}</p>

@@ -12,7 +12,6 @@ from models.predictor import predict_trend
 from services.coin_price import (
     get_coin_prices_bulk,
     get_coin_price_change_24h,
-    get_sparkline,
     is_valid_coin_id,
     update_symbol_id_map
 )
@@ -76,7 +75,6 @@ def analyze():
             if symbol in valid_symbols:
                 price = prices.get(symbol)
                 change = get_coin_price_change_24h(symbol)
-                spark = get_sparkline(symbol)
                 verified.append({
                     "coin": symbol,
                     "status": "verified",
@@ -84,7 +82,7 @@ def analyze():
                     "avg_sentiment": round(avg_sentiment, 3),
                     "price": price,
                     "change_24h": change,
-                    "sparkline": spark
+                    "sparkline": []  # leeg
                 })
             else:
                 upcoming.append({

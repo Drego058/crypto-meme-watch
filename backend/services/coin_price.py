@@ -1,87 +1,78 @@
 
+import os
 import requests
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+CMC_API_KEY = os.getenv("COINMARKETCAP_API_KEY")
+CMC_BASE_URL = "https://pro-api.coinmarketcap.com/v1"
+CMC_HEADERS = {"X-CMC_PRO_API_KEY": CMC_API_KEY}
 
 _price_cache = {}
 _price_expiry = {}
-_known_ids = set()
-_known_ids_last_updated = 0
-_change_cache = {}
-_change_expiry = {}
+_id_map = {}
+_id_map_updated = 0
 
-def update_known_coin_ids():
-    global _known_ids, _known_ids_last_updated
+def update_symbol_id_map(force=False):
+    global _id_map, _id_map_updated
     now = time.time()
-    if now - _known_ids_last_updated < 3600:
+    if not force and (now - _id_map_updated < 86400):
         return
 
     try:
-        url = "https://api.coingecko.com/api/v3/coins/list"
-        response = requests.get(url)
-        response.raise_for_status()
-        coins = response.json()
-        _known_ids = set(coin["id"] for coin in coins)
-        _known_ids_last_updated = now
+        res = requests.get(f"{CMC_BASE_URL}/cryptocurrency/map", headers=CMC_HEADERS)
+        res.raise_for_status()
+        coins = res.json()["data"]
+        _id_map = {coin["symbol"].upper(): coin["id"] for coin in coins}
+        _id_map_updated = now
     except Exception as e:
-        print(f"Error updating known coin IDs: {e}")
+        print(f"Error updating CoinMarketCap symbol map: {e}")
 
-def is_valid_coin_id(coin_id):
-    update_known_coin_ids()
-    return coin_id in _known_ids
+def is_valid_coin_id(symbol):
+    update_symbol_id_map()
+    return symbol.upper() in _id_map
 
-def get_coin_prices_bulk(coin_ids):
+def get_coin_prices_bulk(symbols):
+    update_symbol_id_map()
     now = time.time()
-    valid_ids = [cid for cid in coin_ids if is_valid_coin_id(cid)]
-    uncached_ids = [cid for cid in valid_ids if cid not in _price_cache or now > _price_expiry[cid]]
+    valid_symbols = [s for s in symbols if s.upper() in _id_map]
+    uncached = [s for s in valid_symbols if s not in _price_cache or now > _price_expiry.get(s, 0)]
     prices = {}
 
-    if uncached_ids:
-        ids_str = ",".join(uncached_ids)
+    if uncached:
+        symbol_str = ",".join(uncached)
         try:
-            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids_str}&vs_currencies=usd"
-            response = requests.get(url)
-            if response.status_code == 429:
-                print("429 Too Many Requests - waiting...")
-                time.sleep(5)
-                response = requests.get(url)
+            response = requests.get(
+                f"{CMC_BASE_URL}/cryptocurrency/quotes/latest",
+                headers=CMC_HEADERS,
+                params={"symbol": symbol_str, "convert": "USD"}
+            )
             response.raise_for_status()
-            data = response.json()
-            for cid in uncached_ids:
-                price = data.get(cid, {}).get("usd", None)
-                _price_cache[cid] = price
-                _price_expiry[cid] = now + 60
+            data = response.json()["data"]
+            for s in uncached:
+                price = data.get(s, {}).get("quote", {}).get("USD", {}).get("price")
+                _price_cache[s] = price
+                _price_expiry[s] = now + 60
         except Exception as e:
-            print(f"Error in bulk fetch: {e}")
+            print(f"Error fetching CoinMarketCap prices: {e}")
 
-    for cid in coin_ids:
-        prices[cid] = _price_cache.get(cid) if cid in _price_cache else None
+    for s in symbols:
+        prices[s] = _price_cache.get(s)
     return prices
 
-def get_coin_price_change_24h(coin_id, allow=True):
-    now = time.time()
-    if coin_id in _change_cache and now < _change_expiry.get(coin_id, 0):
-        return _change_cache[coin_id]
-
-    if not allow:
-        return None
-
+def get_coin_price_change_24h(symbol):
     try:
-        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency=usd&days=1"
-        response = requests.get(url)
-        if response.status_code == 429:
-            print("429 Too Many Requests (chart) - waiting...")
-            time.sleep(5)
-            response = requests.get(url)
+        response = requests.get(
+            f"{CMC_BASE_URL}/cryptocurrency/quotes/latest",
+            headers=CMC_HEADERS,
+            params={"symbol": symbol, "convert": "USD"}
+        )
         response.raise_for_status()
-        data = response.json()
-        prices = data.get("prices", [])
-        if len(prices) >= 2:
-            start_price = prices[0][1]
-            end_price = prices[-1][1]
-            change = ((end_price - start_price) / start_price) * 100
-            _change_cache[coin_id] = round(change, 2)
-            _change_expiry[coin_id] = now + 3600
-            return _change_cache[coin_id]
+        data = response.json()["data"]
+        change = data[symbol]["quote"]["USD"].get("percent_change_24h")
+        return round(change, 2)
     except Exception as e:
-        print(f"Error fetching 24h price change: {e}")
+        print(f"Error fetching 24h change (CMC): {e}")
     return None

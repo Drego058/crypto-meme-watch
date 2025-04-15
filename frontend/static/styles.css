@@ -1,0 +1,12 @@
+
+.sparkline {
+  display: block;
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+}
+.sparkline polyline {
+  fill: none;
+  stroke: #2196f3;
+  stroke-width: 2;
+}

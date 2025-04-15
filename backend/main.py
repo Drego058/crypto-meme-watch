@@ -5,26 +5,19 @@ from fastapi.responses import FileResponse, JSONResponse
 import os
 from dotenv import load_dotenv
 import time
-import json
 
 from services.reddit_scraper import fetch_reddit_posts
 from services.sentiment import analyze_sentiment
 from models.predictor import predict_trend
-from services.coin_price import get_coin_prices_bulk, get_coin_price_change_24h, is_valid_coin_id, update_known_coin_ids
+from services.coin_price import (
+    get_coin_prices_bulk,
+    get_coin_price_change_24h,
+    is_valid_coin_id,
+    update_symbol_id_map
+)
 from services.coin_utils import extract_coin_mentions
 
 load_dotenv()
-
-SYMBOL_TO_ID = {
-    "DOGE": "dogecoin",
-    "PEPE": "pepe",
-    "SHIB": "shiba-inu",
-    "WIF": "dogwifhat",
-    "BTC": "bitcoin"
-}
-
-# init
-update_known_coin_ids(force=True)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="../frontend"), name="static")
@@ -40,6 +33,8 @@ def serve_index():
 @app.get("/analyze")
 def analyze():
     try:
+        update_symbol_id_map(force=True)  # zorg dat map up-to-date is
+
         posts = fetch_reddit_posts("meme coin")
         coin_stats = {}
 
@@ -47,6 +42,7 @@ def analyze():
             sentiment = analyze_sentiment(post)
             mentions = extract_coin_mentions(post)
             for symbol in mentions:
+                symbol = symbol.upper()
                 if symbol not in coin_stats:
                     coin_stats[symbol] = {"mentions": 0, "sentiment_sum": 0}
                 coin_stats[symbol]["mentions"] += 1
@@ -55,16 +51,20 @@ def analyze():
         verified = []
         upcoming = []
 
+        symbols = list(coin_stats.keys())
+        valid_symbols = [s for s in symbols if is_valid_coin_id(s)]
+        prices = get_coin_prices_bulk(valid_symbols)
+
         for symbol, data in coin_stats.items():
             if data["mentions"] <= 5:
-                continue  # filter lage mentions
+                continue
+
             mentions = data["mentions"]
             avg_sentiment = data["sentiment_sum"] / mentions
-            coin_id = SYMBOL_TO_ID.get(symbol.upper())
 
-            if coin_id and is_valid_coin_id(coin_id):
-                price = get_coin_prices_bulk([coin_id]).get(coin_id)
-                change = get_coin_price_change_24h(coin_id, allow=True)
+            if symbol in valid_symbols:
+                price = prices.get(symbol)
+                change = get_coin_price_change_24h(symbol)
                 verified.append({
                     "coin": symbol,
                     "status": "verified",

@@ -1,25 +1,20 @@
 
-const backendUrl = window.location.hostname.includes("onrender.com")
-  ? "https://" + window.location.hostname + "/analyze"
-  : "http://localhost:8000/analyze";
-
-fetch(backendUrl)
+fetch("/analyze")
   .then(res => res.json())
   .then(data => {
     const div = document.getElementById("results");
-    if (!data.results) {
-      div.innerHTML = "<p>No data received from backend.</p>";
-      return;
-    }
     data.results.forEach(item => {
-      div.innerHTML += `<div class="card">
-        <p><strong>Text:</strong> ${item.text}</p>
-        <p><strong>Sentiment:</strong> ${item.sentiment}</p>
-        <p><strong>Prediction:</strong> ${item.prediction}</p>
-      </div>`;
+      div.innerHTML += `
+        <div class="card">
+          <h3>$${item.coin}</h3>
+          <p><strong>Mentions:</strong> ${item.mentions}</p>
+          <p><strong>Avg. Sentiment:</strong> ${item.avg_sentiment.toFixed(2)}</p>
+          <p><strong>Price (USD):</strong> ${item.price !== null ? '$' + item.price : 'n/a'}</p>
+        </div>
+      `;
     });
   })
   .catch(err => {
+    document.getElementById("results").innerHTML = "<p>Error fetching data.</p>";
     console.error("Fout bij ophalen data:", err);
-    document.getElementById("results").innerHTML = "<p>Kan geen data laden van de backend.</p>";
   });

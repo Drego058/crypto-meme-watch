@@ -1,15 +1,10 @@
 
-import praw
-import os
+import snscrape.modules.reddit as reddit
 
-reddit = praw.Reddit(
-    client_id=os.getenv("REDDIT_CLIENT_ID"),
-    client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-    user_agent="meme-coin-ai"
-)
-
-def fetch_reddit_posts(keyword, limit=10):
+def fetch_reddit_posts(keyword, limit=20):
     posts = []
-    for submission in reddit.subreddit("all").search(keyword, limit=limit):
-        posts.append(submission.title + "\n" + submission.selftext)
+    for i, post in enumerate(reddit.RedditSearchScraper(f"{keyword} site:reddit.com").get_items()):
+        if i >= limit:
+            break
+        posts.append(post.content)
     return posts

@@ -5,10 +5,13 @@ fetch("/analyze")
     const verifiedContainer = document.getElementById("verifiedCoins");
     const upcomingContainer = document.getElementById("upcomingCoins");
 
+    // Sorteer verified op aantal mentions, aflopend
+    const sortedVerified = data.verified.sort((a, b) => b.mentions - a.mentions);
+
     // Toon upcoming coins
     data.upcoming.forEach(item => {
       const div = document.createElement("div");
-      div.className = "card";
+      div.className = "card upcoming";
       div.innerHTML = `
         <h3>$${item.coin}</h3>
         <p><strong>Status:</strong> 🚀 Upcoming</p>
@@ -19,9 +22,9 @@ fetch("/analyze")
     });
 
     // Toon verified coins
-    data.verified.forEach(item => {
+    sortedVerified.forEach(item => {
       const div = document.createElement("div");
-      div.className = "card";
+      div.className = "card verified";
       div.innerHTML = `
         <h3>$${item.coin}</h3>
         <p><strong>Status:</strong> ✅ Verified</p>

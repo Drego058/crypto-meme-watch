@@ -24,8 +24,22 @@ h1, h2 {
 }
 
 .card {
-  background-color: #fff;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card.verified {
+  background-color: #e6f7e6;
+  border-left: 5px solid #4caf50;
+}
+
+.card.upcoming {
+  background-color: #fff3cd;
+  border-left: 5px solid #ffc107;
 }

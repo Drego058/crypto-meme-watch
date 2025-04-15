@@ -4,16 +4,17 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 import os
 from dotenv import load_dotenv
+import time
+import json
 
 from services.reddit_scraper import fetch_reddit_posts
 from services.sentiment import analyze_sentiment
 from models.predictor import predict_trend
-from services.coin_price import get_coin_prices_bulk, get_coin_price_change_24h, is_valid_coin_id
+from services.coin_price import get_coin_prices_bulk, get_coin_price_change_24h, is_valid_coin_id, update_known_coin_ids
 from services.coin_utils import extract_coin_mentions
 
 load_dotenv()
 
-# Simpele CoinTicker -> CoinGecko ID mapping
 SYMBOL_TO_ID = {
     "DOGE": "dogecoin",
     "PEPE": "pepe",
@@ -21,6 +22,9 @@ SYMBOL_TO_ID = {
     "WIF": "dogwifhat",
     "BTC": "bitcoin"
 }
+
+# init
+update_known_coin_ids(force=True)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="../frontend"), name="static")
@@ -48,19 +52,19 @@ def analyze():
                 coin_stats[symbol]["mentions"] += 1
                 coin_stats[symbol]["sentiment_sum"] += sentiment
 
-        result = []
-
         verified = []
         upcoming = []
 
         for symbol, data in coin_stats.items():
+            if data["mentions"] <= 5:
+                continue  # filter lage mentions
             mentions = data["mentions"]
             avg_sentiment = data["sentiment_sum"] / mentions
             coin_id = SYMBOL_TO_ID.get(symbol.upper())
 
             if coin_id and is_valid_coin_id(coin_id):
                 price = get_coin_prices_bulk([coin_id]).get(coin_id)
-                change = get_coin_price_change_24h(coin_id)
+                change = get_coin_price_change_24h(coin_id, allow=True)
                 verified.append({
                     "coin": symbol,
                     "status": "verified",

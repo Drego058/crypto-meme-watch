@@ -28,7 +28,7 @@ def serve_index():
 @app.get("/analyze")
 def analyze():
     try:
-        update_symbol_id_map()
+        update_symbol_id_map()  # geforceerd verversen symbol-to-ID map
         raw_posts = fetch_reddit_posts("meme coin") + fetch_x_posts("meme coin")
 
         stats = {}

@@ -1,17 +1,13 @@
 
-# Meme Coin AI Dashboard Pro
+# Meme Coin AI Dashboard
 
-AI-dashboard dat trending meme coins herkent op Reddit & X, sentiment analyseert en voorspelt welke coins kunnen stijgen of dalen.
+Volledig werkende meme coin AI-tracker met sentiment, scraping, trending analyse en fallback.
 
-## Features
+## Inhoud
 
-- ✅ Realtime scraping van Reddit en X
-- ✅ Sentimentanalyse met VADER
-- ✅ Slimme coinherkenning ($PEPE, WAGMI, etc.)
-- ✅ Trending score + hot coins
-- ✅ Sparklines (laatste 7 dagen)
-- ✅ Auto-refresh & demo fallback
-- ✅ Responsive design met dark mode
+- ✅ FastAPI backend met snscrape (géén Pushshift)
+- ✅ CoinMarketCap + CoinGecko fallback voor prijsdata
+- ✅ Frontend met filters, dark mode, mobielvriendelijk
 
 ## Installatie
 
@@ -21,16 +17,11 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Frontend: open `http://localhost:8000/`
+Open in browser: http://localhost:8000/
 
-## API Key
+## Render-deploy
+1. Zet COINMARKETCAP_API_KEY in Environment
+2. Upload deze bestanden naar GitHub en link je repo
+3. Klik op "Manual Deploy" > Clear Cache > Deploy
 
-Plaats je CoinMarketCap key in `.env`:
-
-```
-COINMARKETCAP_API_KEY=your_key_here
-```
-
-## Deployment
-
-Gebruik GitHub + Render. Frontend wordt meegeleverd via FastAPI.
+Enjoy!

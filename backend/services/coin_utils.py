@@ -2,5 +2,6 @@
 import re
 
 def extract_coin_mentions(text):
-    matches = re.findall(r'\$?[A-Z]{2,5}', text)
-    return list(set([m.replace("$", "") for m in matches if len(m) <= 5]))
+    pattern = r"(?:\$|#)?([A-Za-z]{2,10})"
+    matches = re.findall(pattern, text)
+    return list(set(m.upper() for m in matches if len(m) <= 8))

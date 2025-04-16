@@ -4,98 +4,74 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 import os
 from dotenv import load_dotenv
-import time
-
 from services.reddit_scraper import fetch_reddit_posts
+from services.x_scraper import fetch_x_posts
 from services.sentiment import analyze_sentiment
-from models.predictor import predict_trend
+from services.coin_utils import extract_coin_mentions
 from services.coin_price import (
     get_coin_prices_bulk,
     get_coin_price_change_24h,
     is_valid_coin_id,
     update_symbol_id_map
 )
-from services.coin_utils import extract_coin_mentions
 
 load_dotenv()
 
-FALLBACK_VALID_SYMBOLS = {"BTC", "ETH", "DOGE", "PEPE", "SHIB", "WIF"}
-
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="../frontend"), name="static")
+app.mount("/static", StaticFiles(directory="../frontend/static"), name="static")
 
 @app.get("/")
 def serve_index():
-    try:
-        index_path = os.path.join(os.path.dirname(__file__), "../frontend/index.html")
-        return FileResponse(index_path)
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+    index_path = os.path.join(os.path.dirname(__file__), "../frontend/index.html")
+    return FileResponse(index_path)
 
 @app.get("/analyze")
 def analyze():
     try:
         update_symbol_id_map()
+        raw_posts = fetch_reddit_posts("meme coin") + fetch_x_posts("meme coin")
 
-        posts = fetch_reddit_posts("meme coin")
-        print(f"🔎 Gevonden posts: {len(posts)}")
-
-        coin_stats = {}
-
-        for post in posts:
+        stats = {}
+        for post in raw_posts:
             sentiment = analyze_sentiment(post)
             mentions = extract_coin_mentions(post)
-            print(f"📨 Mentions in post: {mentions}")
             for symbol in mentions:
-                symbol = symbol.upper()
-                if symbol not in coin_stats:
-                    coin_stats[symbol] = {"mentions": 0, "sentiment_sum": 0}
-                coin_stats[symbol]["mentions"] += 1
-                coin_stats[symbol]["sentiment_sum"] += sentiment
+                if symbol not in stats:
+                    stats[symbol] = {"mentions": 0, "sentiment": 0}
+                stats[symbol]["mentions"] += 1
+                stats[symbol]["sentiment"] += sentiment
 
-        verified = []
-        upcoming = []
+        verified, upcoming = [], []
+        symbols = list(stats.keys())
+        valid = [s for s in symbols if is_valid_coin_id(s)]
 
-        symbols = list(coin_stats.keys())
-        print(f"💬 Herkende coins: {symbols}")
+        prices = get_coin_prices_bulk(valid)
 
-        valid_symbols = [s for s in symbols if is_valid_coin_id(s) or s in FALLBACK_VALID_SYMBOLS]
-        print(f"✅ Geldige CoinMarketCap-symbolen (incl. fallback): {valid_symbols}")
-
-        prices = get_coin_prices_bulk(valid_symbols)
-
-        for symbol, data in coin_stats.items():
-            if data["mentions"] <= 2:
-                print(f"⚠️ Te weinig mentions voor {symbol}, gefilterd.")
+        for symbol in symbols:
+            data = stats[symbol]
+            if data["mentions"] < 2:
                 continue
-
-            mentions = data["mentions"]
-            avg_sentiment = data["sentiment_sum"] / mentions
-
-            if symbol in valid_symbols:
-                price = prices.get(symbol)
+            avg_sentiment = round(data["sentiment"] / data["mentions"], 3)
+            if symbol in valid:
                 change = get_coin_price_change_24h(symbol)
                 verified.append({
                     "coin": symbol,
-                    "status": "verified",
-                    "mentions": mentions,
-                    "avg_sentiment": round(avg_sentiment, 3),
-                    "price": price,
+                    "mentions": data["mentions"],
+                    "avg_sentiment": avg_sentiment,
+                    "price": prices.get(symbol),
                     "change_24h": change,
-                    "sparkline": []  # leeg
+                    "status": "verified"
                 })
             else:
                 upcoming.append({
                     "coin": symbol,
-                    "status": "upcoming",
-                    "mentions": mentions,
-                    "avg_sentiment": round(avg_sentiment, 3),
+                    "mentions": data["mentions"],
+                    "avg_sentiment": avg_sentiment,
                     "price": None,
                     "change_24h": None,
-                    "sparkline": []
+                    "status": "upcoming"
                 })
 
-        print(f"✅ Verified: {len(verified)} | 🚀 Upcoming: {len(upcoming)}")
         return {"verified": verified, "upcoming": upcoming}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})

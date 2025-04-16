@@ -1,20 +1,19 @@
 
-# 🧠 Meme Coin AI Dashboard
+# Meme Coin AI Dashboard Pro
 
-Een AI-powered dashboard dat meme coins in de gaten houdt op Reddit en X.  
-Toont real-time sentiment, mentions, prijsdata en trending scores.
+AI-dashboard dat trending meme coins herkent op Reddit & X, sentiment analyseert en voorspelt welke coins kunnen stijgen of dalen.
 
-## 🔧 Functionaliteiten
+## Features
 
-- 🔍 Zoek naar trending meme coins
-- 📈 Sentimentanalyse (VADER)
-- 💬 Mentions op Reddit
-- 💰 Prijs + 24u change via CoinMarketCap & CoinGecko fallback
-- 🔥 Trending score + HOT-label
-- 🖼️ Sparklines (tijdelijk uitgeschakeld)
-- 🌐 Volledig werkende frontend (light UI)
+- ✅ Realtime scraping van Reddit en X
+- ✅ Sentimentanalyse met VADER
+- ✅ Slimme coinherkenning ($PEPE, WAGMI, etc.)
+- ✅ Trending score + hot coins
+- ✅ Sparklines (laatste 7 dagen)
+- ✅ Auto-refresh & demo fallback
+- ✅ Responsive design met dark mode
 
-## 🚀 Installatie
+## Installatie
 
 ```bash
 cd backend
@@ -22,30 +21,16 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Bezoek dan: `http://localhost:8000`
+Frontend: open `http://localhost:8000/`
 
-## 📁 Projectstructuur
+## API Key
+
+Plaats je CoinMarketCap key in `.env`:
 
 ```
-project_root/
-├── backend/
-│   ├── main.py
-│   ├── services/
-│   └── models/
-├── frontend/
-│   ├── index.html
-│   └── static/
-├── data/
-├── .env.template
-└── README.md
+COINMARKETCAP_API_KEY=your_key_here
 ```
 
-## 🧪 Demo-modus
+## Deployment
 
-Je kunt in de frontend handmatig demo-data tonen.
-
-## 🌍 Deployment
-
-Gebruik GitHub + Render (of Vercel) om te hosten.  
-Voeg je API keys toe als environment variables.
-
+Gebruik GitHub + Render. Frontend wordt meegeleverd via FastAPI.

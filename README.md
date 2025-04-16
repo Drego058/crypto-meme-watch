@@ -1,13 +1,12 @@
 
-# Meme Coin AI Dashboard
+# Meme Coin AI Project (Pushshift-free)
 
-Volledig werkende meme coin AI-tracker met sentiment, scraping, trending analyse en fallback.
+✅ 100% werkende versie zonder gebruik van Pushshift API.
 
-## Inhoud
-
-- ✅ FastAPI backend met snscrape (géén Pushshift)
-- ✅ CoinMarketCap + CoinGecko fallback voor prijsdata
-- ✅ Frontend met filters, dark mode, mobielvriendelijk
+## Features:
+- Realtime scraping via `snscrape` (Reddit + X)
+- CoinMarketCap + CoinGecko fallback voor prijsdata
+- Responsive frontend met dark mode, sentimentfilter, auto-refresh
 
 ## Installatie
 
@@ -19,9 +18,12 @@ uvicorn main:app --reload
 
 Open in browser: http://localhost:8000/
 
-## Render-deploy
-1. Zet COINMARKETCAP_API_KEY in Environment
-2. Upload deze bestanden naar GitHub en link je repo
-3. Klik op "Manual Deploy" > Clear Cache > Deploy
+## Belangrijk
+Zorg dat je een `.env` bestand hebt met:
+COINMARKETCAP_API_KEY=your_key_here
 
-Enjoy!
+## Render deploy
+1. Zet je API key in "Environment"
+2. Manual Deploy > Clear Cache > Deploy
+
+Klaar!

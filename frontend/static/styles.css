@@ -69,3 +69,34 @@ body.dark .card {
 body.dark .sentiment-positive { color: #8bc34a; }
 body.dark .sentiment-negative { color: #e57373; }
 body.dark .sentiment-neutral { color: #ffb74d; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .coin-list.grid-view {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .controls select,
+  .controls button {
+    width: 90%;
+    max-width: 300px;
+    font-size: 16px;
+  }
+
+  h1, h2 {
+    font-size: 1.5em;
+    padding: 0 10px;
+  }
+
+  .card {
+    font-size: 0.95em;
+  }
+}
